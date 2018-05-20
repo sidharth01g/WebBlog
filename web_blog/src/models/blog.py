@@ -8,12 +8,14 @@ from web_blog.src.common.database import Database
 
 class Blog(object):
 
-    def __init__(self, title: str, author: str, creation_date: Union[datetime.datetime, str, None] = None,
+    def __init__(self, title: str, author: str, author_id: str,
+                 creation_date: Union[datetime.datetime, str, None] = None,
                  _id: Optional[str] = None):
 
         # self.blog_config = blog_config
         self.title = title
         self.author = author
+        self.author_id = author_id
         self._id = _id if _id else hashlib.sha1((self.title + self.author).encode()).hexdigest()
 
         if not creation_date:
