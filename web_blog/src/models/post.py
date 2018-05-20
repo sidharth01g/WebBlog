@@ -6,14 +6,14 @@ import datetime
 
 class BlogPost(object):
 
-    def __init__(self, title: str, content: str, author: str, blog_id: str, post_id: Optional[str] = None,
+    def __init__(self, title: str, content: str, author: str, blog_id: str, _id: Optional[str] = None,
                  date: Optional[datetime.datetime] = None) -> None:
         self.title = title
         self.content = content
         self.author = author
         self.blog_id = blog_id
 
-        self.post_id = post_id if post_id is not None else uuid.uuid4().hex
+        self._id = _id if _id is not None else uuid.uuid4().hex
         self.date = date if date is not None else datetime.datetime.utcnow()
         pass
 
@@ -37,5 +37,4 @@ class BlogPost(object):
 
     @classmethod
     def wrap_result(cls, result):
-        return cls(title=result['title'], content=result['content'], author=result['author'], blog_id=result["blog_id"],
-                   post_id=result['post_id'], date=result['date'])
+        return cls(**result)
