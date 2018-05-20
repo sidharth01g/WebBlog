@@ -9,12 +9,12 @@ from web_blog.src.common.database import Database
 class Blog(object):
 
     def __init__(self, title: str, author: str, creation_date: Union[datetime.datetime, str, None] = None,
-                 blog_id: Optional[str] = None):
+                 _id: Optional[str] = None):
 
         # self.blog_config = blog_config
         self.title = title
         self.author = author
-        self.blog_id = blog_id if blog_id else hashlib.sha1((self.title + self.author).encode()).hexdigest()
+        self._id = _id if _id else hashlib.sha1((self.title + self.author).encode()).hexdigest()
 
         if not creation_date:
             self.creation_date = datetime.datetime.utcnow()
@@ -26,7 +26,7 @@ class Blog(object):
             raise TypeError('Blog creation date is of invalid type or format')
 
     def create_blog(self, blog_config: BlogConfig) -> None:
-        query = {"blog_id": self.blog_id}
+        query = {"_id": self._id}
         results = Blog.find_blogs(blog_config=blog_config, query=query)
         if len(results) == 0:
             print("Creating new blog titled '{}'".format(self.title))
@@ -51,20 +51,19 @@ class Blog(object):
 
     @classmethod
     def wrap_result(cls, result):
-        return cls(title=result['title'], author=result['author'],
-                   blog_id=result["blog_id"], creation_date=result['creation_date'])
+        return cls(**result)
 
     def create_post(self, blog_config: BlogConfig) -> None:
 
         title = input('Post title: ')
         content = input('Post content: ')
         self.create_blog(blog_config=blog_config)
-        blog_post = BlogPost(title=title, content=content, author=self.author, blog_id=self.blog_id)
+        blog_post = BlogPost(title=title, content=content, author=self.author, blog_id=self._id)
         blog_post.post_to_db(uri=blog_config.uri, db_name=blog_config.db_name,
                              collection_name=blog_config.collection_name_posts)
 
     def get_posts(self, blog_config: BlogConfig) -> List[BlogPost]:
         results = BlogPost.find_posts(uri=blog_config.uri, db_name=blog_config.db_name,
                                       collection_name=blog_config.collection_name_posts,
-                                      query={'blog_id': self.blog_id})
+                                      query={'_id': self._id})
         return results
