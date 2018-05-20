@@ -53,12 +53,10 @@ class Blog(object):
     def wrap_result(cls, result):
         return cls(**result)
 
-    def create_post(self, blog_config: BlogConfig) -> None:
+    def create_post(self, blog_config: BlogConfig, post_title: str, post_content: str) -> None:
 
-        title = input('Post title: ')
-        content = input('Post content: ')
         self.create_blog(blog_config=blog_config)
-        blog_post = BlogPost(title=title, content=content, author=self.author, blog_id=self._id)
+        blog_post = BlogPost(title=post_title, content=post_content, author=self.author, blog_id=self._id)
         blog_post.post_to_db(uri=blog_config.uri, db_name=blog_config.db_name,
                              collection_name=blog_config.collection_name_posts)
 
