@@ -66,3 +66,16 @@ class User(object):
         query = {'author_id': self._id}
         results = Blog.find_blogs(blog_config=blog_config, query=query)
         return results
+
+    def create_blog(self, blog_config: BlogConfig, title: str) -> None:
+        blog = Blog(title=title, author=self.email, author_id=self._id)
+        blog.create_blog(blog_config=blog_config)
+
+    @staticmethod
+    def create_post(blog_config: BlogConfig, post_title: str, post_content: str, blog_id: str) -> bool:
+        blog = Blog.find_blog(blog_config=blog_config, query={'blog_id': blog_id})
+        if not blog:
+            # No such blog ID
+            return False
+        blog.create_post(blog_config=blog_config, post_title=post_title, post_content=post_content)
+        return True
