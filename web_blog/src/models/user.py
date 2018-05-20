@@ -1,6 +1,7 @@
 from web_blog.src.common.database import Database
 from web_blog.configurations.blog_config import BlogConfig
-from typing import Optional
+from web_blog.src.models.blog import Blog
+from typing import Optional, List
 import hashlib
 from flask import session
 
@@ -53,14 +54,15 @@ class User(object):
         return True
 
     @staticmethod
-    def login(email: str):
+    def login(email: str) -> None:
         # login_valid has already been called
         session['email'] = email
 
     @staticmethod
-    def logout():
+    def logout() -> None:
         session['email'] = None
 
-    # def save_to_db(self, blog_config: BlogConfig):
-    #     db = Database(uri=blog_config.uri, db_name=blog_config.db_name)
-    #     db.insert(collection_name=blog_config.collection_name_users, data=self.__dict__)
+    def get_blogs_by_self(self, blog_config: BlogConfig) -> List[Blog]:
+        query = {'author_id': self._id}
+        results = Blog.find_blogs(blog_config=blog_config, query=query)
+        return results
