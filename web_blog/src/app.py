@@ -13,6 +13,12 @@ blog_config = BlogConfig(uri=uri, db_name=db_name, collection_name_posts=collect
 app = Flask(__name__)
 
 
+# Initial setup
+@app.before_first_request
+def setup():
+    pass
+
+
 # API endpoints
 @app.route('/')
 def index():
