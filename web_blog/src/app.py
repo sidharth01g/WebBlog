@@ -1,4 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, session
+from web_blog.src.models.user import User
+from web_blog.configurations.blog_config import BlogConfig
+
+uri = 'mongodb://127.0.0.1:27017'
+db_name = 'blog_db'
+collection_name_posts = 'blog_posts'
+collection_name_users = 'blog_authors'
+collection_name_blogs = 'blog_blogs'
+blog_config = BlogConfig(uri=uri, db_name=db_name, collection_name_posts=collection_name_posts,
+                         collection_name_blogs=collection_name_blogs, collection_name_users=collection_name_users)
 
 app = Flask(__name__)
 
@@ -7,6 +17,20 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return render_template('login.html')
+
+
+@app.route('/login', methods=['POST'])
+def login_user():
+    email = request.form['email']
+    password = request.form['password']
+
+    if User.login_valid(blog_config=blog_config, email=email, password=password):
+        User.login(email=email)  # Add email to session
+
+        return render_template("profile.html", email=session['email'])
+
+    else:
+        return render_template("denied.html")
 
 
 if __name__ == '__main__':
