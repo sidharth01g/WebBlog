@@ -12,6 +12,8 @@ blog_config = BlogConfig(uri=uri, db_name=db_name, collection_name_posts=collect
 
 app = Flask(__name__)
 
+app.secret_key = "ajnefiun3iufnaieufn389hr9823hr"
+
 
 # Initial setup
 @app.before_first_request
@@ -37,6 +39,19 @@ def login_user():
 
     else:
         return render_template("denied.html")
+
+
+@app.route('/register', methods=['POST'])
+def register_user():
+    email = request.form['email']
+    password = request.form['password']
+
+    success = User.register(blog_config=blog_config, email=email, password=password)
+
+    if success is True:
+        return render_template("message.html", message="Registered {}".format(email))
+    else:
+        return render_template("message.html", message="Email ID {} is already registered".format(email))
 
 
 if __name__ == '__main__':
