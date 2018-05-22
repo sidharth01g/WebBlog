@@ -38,7 +38,7 @@ def login_user():
         return render_template("profile.html", email=session['email'])
 
     else:
-        return render_template("denied.html")
+        return render_template("message.html", message="Invalid user credentials")
 
 
 @app.route('/register', methods=['POST'])
@@ -49,8 +49,9 @@ def register_user():
     success = User.register(blog_config=blog_config, email=email, password=password)
 
     if success is True:
-        return render_template("message.html", message="Registered {}".format(email))
+        return render_template("message.html", message="Registered {}".format(session['email']))
     else:
+        session['email'] = None
         return render_template("message.html", message="Email ID {} is already registered".format(email))
 
 
