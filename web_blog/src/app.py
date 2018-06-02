@@ -4,7 +4,6 @@ from web_blog.src.models.blog import Blog
 from web_blog.configurations.blog_config import BlogConfig
 from web_blog.logging.logger_base import Logging
 from typing import Optional
-import logging
 
 logger = Logging.create_rotating_log(module_name=__name__, logging_directory='/tmp')
 logger.info('Starting Blog Application')
