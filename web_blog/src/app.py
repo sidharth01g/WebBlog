@@ -88,7 +88,7 @@ def user_blogs(user_id: Optional[str] = None):
 
     blogs = user.get_blogs_by_self(blog_config=blog_config)
     if not blogs:
-        return render_template('message.html', message='User ID {} has no blogs yet'.format(user_id))
+        return render_template('message.html', message='User {} has no blogs yet'.format(user.email))
 
     return render_template('user_blogs.html', blogs=blogs, user=user)
 
