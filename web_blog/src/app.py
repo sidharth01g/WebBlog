@@ -46,6 +46,10 @@ def register_user():
     email = request.form['email']
     password = request.form['password']
 
+    if User.validate_email(email) is not True or User.validate_password(password) is not True:
+        return render_template('message.html', message='Invalid email ID or password too weak')
+        return False
+
     success = User.register(blog_config=blog_config, email=email, password=password)
 
     if success is True:
