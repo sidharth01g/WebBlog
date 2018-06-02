@@ -41,6 +41,7 @@ class User(object):
 
     @classmethod
     def register(cls, blog_config: BlogConfig, email: str, password: str) -> bool:
+
         result = cls.get_by_email(blog_config=blog_config, email=email)
         if result:  # User already exists
             return False
@@ -78,4 +79,18 @@ class User(object):
             # No such blog ID
             return False
         blog.create_post(blog_config=blog_config, post_title=post_title, post_content=post_content)
+        return True
+
+    @staticmethod
+    def validate_email(email: str) -> bool:
+        if '@' not in email or '.' not in email:
+            return False
+        if len(email.split('@')[0]) < 1 or len(email.split('@')[-1]) < 1:
+            return False
+        return True
+
+    @staticmethod
+    def validate_password(password: str) -> bool:
+        if len(password) < 3:
+            return False
         return True
