@@ -59,5 +59,20 @@ def register_user():
         return render_template("message.html", message="Email ID {} is already registered".format(email))
 
 
+@app.route('/blogs/<string:user_id>', methods=['GET'])
+def user_blogs(user_id: str):
+    user_id = str(user_id)
+
+    user = User.get_by_id(blog_config=blog_config, _id=user_id)
+    if not user:
+        return render_template('message.html', message='User ID {} not found'.format(user_id))
+
+    blogs = user.get_blogs_by_self(blog_config=blog_config)
+    if not blogs:
+        return render_template('message.html', message='User ID {} has no blogs yet'.format(user_id))
+
+    return render_template('user_blogs.html', blogs=blogs, user=user)
+
+
 if __name__ == '__main__':
     app.run(port=4775)
