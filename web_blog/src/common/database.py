@@ -23,7 +23,7 @@ class Database(object):
 
     def find(self, collection_name: str, query: Optional[Dict]) -> List[Dict]:
         try:
-            logger.info('find: {} in collection {}'.format(query, collection_name))
+            logger.info('find: "{}" in collection "{}"'.format(query, collection_name))
             assert type(query) is dict or query is None
             results = self.database[collection_name].find(query)
         except Exception as error:
@@ -33,7 +33,7 @@ class Database(object):
 
     def find_one(self, collection_name: str, query: Optional[Dict]) -> Dict:
         try:
-            logger.info('find_one: {} in collection {}'.format(query, collection_name))
+            logger.info('find_one: "{}" in collection "{}"'.format(query, collection_name))
             assert type(query) is dict or query is None
             results = self.database[collection_name].find_one(query)
         except Exception as error:
