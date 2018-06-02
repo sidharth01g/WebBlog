@@ -1,6 +1,12 @@
 from flask import Flask, render_template, request, session
 from web_blog.src.models.user import User
 from web_blog.configurations.blog_config import BlogConfig
+from web_blog.logging.logger_base import Logging
+from typing import Optional
+import logging
+
+logger = Logging.create_rotating_log(module_name=__name__, logging_directory='/tmp')
+logger.info('Starting Blog Application')
 
 uri = 'mongodb://127.0.0.1:27017'
 db_name = 'blog_db'
@@ -60,10 +66,23 @@ def register_user():
 
 
 @app.route('/blogs/<string:user_id>', methods=['GET'])
-def user_blogs(user_id: str):
-    user_id = str(user_id)
+@app.route('/blogs')
+def user_blogs(user_id: Optional[str] = None):
+
+
+    # If no user ID is available get user ID from the email address of the session
+    if user_id is None:
+        if session['email'] is not None:
+            user = User.get_by_email(blog_config=blog_config, email=session['email'])
+            user_id = user._id
+        else:
+            render_template('message.html', message='No user')
+
+    logger.info('user_id: {}'.format(user_id))
+    # exit()
 
     user = User.get_by_id(blog_config=blog_config, _id=user_id)
+
     if not user:
         return render_template('message.html', message='User ID {} not found'.format(user_id))
 
