@@ -65,5 +65,5 @@ class Blog(object):
     def get_posts(self, blog_config: BlogConfig) -> List[BlogPost]:
         results = BlogPost.find_posts(uri=blog_config.uri, db_name=blog_config.db_name,
                                       collection_name=blog_config.collection_name_posts,
-                                      query={'_id': self._id})
+                                      query={'blog_id': self._id})
         return results
