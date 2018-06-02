@@ -107,5 +107,6 @@ def blog_posts(blog_id: Optional[str] = None):
 
     return render_template('blog_posts.html', blog=blog, posts=posts)
 
+
 if __name__ == '__main__':
     app.run(port=4775)
