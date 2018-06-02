@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, session
 from web_blog.src.models.user import User
+from web_blog.src.models.blog import Blog
 from web_blog.configurations.blog_config import BlogConfig
 from web_blog.logging.logger_base import Logging
 from typing import Optional
@@ -68,8 +69,6 @@ def register_user():
 @app.route('/blogs/<string:user_id>', methods=['GET'])
 @app.route('/blogs')
 def user_blogs(user_id: Optional[str] = None):
-
-
     # If no user ID is available get user ID from the email address of the session
     if user_id is None:
         if session['email'] is not None:
@@ -92,6 +91,21 @@ def user_blogs(user_id: Optional[str] = None):
 
     return render_template('user_blogs.html', blogs=blogs, user=user)
 
+
+@app.route('/posts/<string:blog_id>')
+def blog_posts(blog_id: Optional[str] = None):
+    if blog_id is None:
+        return render_template('message.html', message='No blog ID received')
+
+    blog = Blog.find_blog(blog_config=blog_config, query={'_id': blog_id})
+    if not blog:
+        return render_template('message.html', message='No blogs found matching blog ID: {}'.format(blog_id))
+
+    posts = blog.get_posts(blog_config=blog_config)
+    if not posts:
+        return render_template('message.html', message='No posts found matching blog {}'.format(blog.title))
+
+    return render_template('blog_posts.html', blog=blog, posts=posts)
 
 if __name__ == '__main__':
     app.run(port=4775)
