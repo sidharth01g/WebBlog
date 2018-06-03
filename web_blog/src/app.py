@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, make_response
 from web_blog.src.models.user import User
 from web_blog.src.models.blog import Blog
 from web_blog.configurations.blog_config import BlogConfig
@@ -118,7 +118,24 @@ def create_blog():
         author_id = user._id
         blog = Blog(title=title, author=author, author_id=author_id)
         blog.create_blog(blog_config=blog_config)
-        return render_template('message.html', message='Created blog titled "{}"'.format(title))
+        return make_response(user_blogs(author_id))
+        pass
+
+
+@app.route('/posts/new/<string:blog_id>', methods=['GET', 'POST'])
+def create_post(blog_id: str):
+    if request.method == 'GET':
+        blog = Blog.find_blog(blog_config=blog_config, query={'_id': blog_id})
+        if not blog:
+            return render_template('message.html', message="Can't find blog")
+        return render_template('new_post.html', blog=blog)
+    elif request.method == 'POST':
+        title = request.form['post-title']
+        content = request.form['post-content']
+        blog = Blog.find_blog(blog_config=blog_config, query={'_id': blog_id})
+        if blog:
+            blog.create_post(blog_config=blog_config, post_title=title, post_content=content)
+        return make_response(blog_posts(blog_id=blog_id))
         pass
 
 
