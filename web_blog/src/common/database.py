@@ -1,5 +1,8 @@
 import pymongo
 from typing import Optional, Dict, List
+from web_blog.logging.logger_base import Logging
+
+logger = Logging.create_rotating_log(module_name=__name__, logging_directory='/tmp')
 
 
 class Database(object):
@@ -20,6 +23,8 @@ class Database(object):
 
     def find(self, collection_name: str, query: Optional[Dict]) -> List[Dict]:
         try:
+            logger.info('find: "{}" in collection "{}"'.format(query, collection_name))
+            assert type(query) is dict or query is None
             results = self.database[collection_name].find(query)
         except Exception as error:
             print('ERROR: ', error)
@@ -28,6 +33,8 @@ class Database(object):
 
     def find_one(self, collection_name: str, query: Optional[Dict]) -> Dict:
         try:
+            logger.info('find_one: "{}" in collection "{}"'.format(query, collection_name))
+            assert type(query) is dict or query is None
             results = self.database[collection_name].find_one(query)
         except Exception as error:
             print('ERROR: ', error)

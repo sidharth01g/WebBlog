@@ -4,6 +4,9 @@ from web_blog.configurations.blog_config import BlogConfig
 from web_blog.src.models.post import BlogPost
 import hashlib
 from web_blog.src.common.database import Database
+from web_blog.logging.logger_base import Logging
+
+logger = Logging.create_rotating_log(module_name=__name__, logging_directory='/tmp')
 
 
 class Blog(object):
@@ -31,11 +34,11 @@ class Blog(object):
         query = {"_id": self._id}
         results = Blog.find_blogs(blog_config=blog_config, query=query)
         if len(results) == 0:
-            print("Creating new blog titled '{}'".format(self.title))
+            logger.debug("Creating new blog titled '{}'".format(self.title))
             db = Database(uri=blog_config.uri, db_name=blog_config.db_name)
             db.insert(collection_name=blog_config.collection_name_blogs, data=self.__dict__)
         else:
-            print('This blog exists already')
+            logger.debug('This blog exists already. ID={}'.format(self._id))
 
     @staticmethod
     def find_blogs(blog_config: BlogConfig, query: dict) -> List['Blog']:
@@ -65,5 +68,5 @@ class Blog(object):
     def get_posts(self, blog_config: BlogConfig) -> List[BlogPost]:
         results = BlogPost.find_posts(uri=blog_config.uri, db_name=blog_config.db_name,
                                       collection_name=blog_config.collection_name_posts,
-                                      query={'_id': self._id})
+                                      query={'blog_id': self._id})
         return results

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="container">
+        <h2>Blogs by {{ user.email }}</h2>
+    </div>
+    {% for blog in blogs %}
+        <h3><a href="/posts/{{ blog._id }}">Title: {{ blog.title }}, Author: {{ blog.author }}</a></h3>
+    {% endfor %}
+
+{% endblock %}
