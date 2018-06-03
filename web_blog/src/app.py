@@ -107,5 +107,20 @@ def blog_posts(blog_id: Optional[str] = None):
     return render_template('blog_posts.html', blog=blog, posts=posts)
 
 
+@app.route('/blogs/new', methods=['GET', 'POST'])
+def create_blog():
+    if request.method == 'GET':
+        return render_template('new_blog.html')
+    elif request.method == 'POST':
+        title = request.form['title']
+        author = session['email']
+        user = User.get_by_email(blog_config=blog_config, email=author)
+        author_id = user._id
+        blog = Blog(title=title, author=author, author_id=author_id)
+        blog.create_blog(blog_config=blog_config)
+        return render_template('message.html', message='Created blog titled "{}"'.format(title))
+        pass
+
+
 if __name__ == '__main__':
     app.run(port=4775)
